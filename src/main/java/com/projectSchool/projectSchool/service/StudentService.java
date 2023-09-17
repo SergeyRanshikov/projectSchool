@@ -8,6 +8,7 @@ import com.projectSchool.projectSchool.model.Student;
 import com.projectSchool.projectSchool.repository.StudentRepository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -120,6 +121,22 @@ public class StudentService {
 
     public synchronized void printSync(Student student) {
         System.out.println(student);
+    }
+
+    public List<String> getAllStartsWithA() {
+        return studentRepository.findAll()
+                .stream()
+                .map(Student::getName)
+                .filter(s->s.startsWith("A"))
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    public double getAverageAge() {
+        return studentRepository.findAll().stream()
+                .mapToInt(Student::getAge)
+                .average()
+                .orElseThrow(NotFoundException::new);
     }
 }
 
