@@ -8,6 +8,7 @@ import com.projectSchool.projectSchool.model.Student;
 import com.projectSchool.projectSchool.repository.StudentRepository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -80,6 +81,63 @@ public class StudentService {
     public List<Student> getLastStudents(int quantity) {
         logger.info("invoked method getLastStudents");
         return studentRepository.findLastStudents(quantity);
+    }
+
+    public void printAsync() {
+        List<Student> all = studentRepository.findAll();
+
+        System.out.println(all.get(0));
+        System.out.println(all.get(1));
+
+        Thread t1 = new  Thread(()  -> {
+            System.out.println(all.get(2));
+            System.out.println(all.get(3));
+        });
+        Thread t2 = new  Thread(() -> {
+            System.out.println(all.get(4));
+            System.out.println(all.get(5));
+        });
+        t1.start();
+        t2.start();
+    }
+
+    public void printSync() {
+        List<String> listStudentName = getAll().stream().map(Student::getName).toList();
+
+        printNameStudent(listStudentName);
+        printNameStudent(listStudentName);
+
+        new Thread(() -> {
+            printNameStudent(listStudentName);
+            printNameStudent(listStudentName);
+        }).start();
+
+        new Thread(() -> {
+            printNameStudent(listStudentName);
+            printNameStudent(listStudentName);
+        }).start();
+    }
+    int count =0;
+
+    public synchronized void printNameStudent(List<String> listStudentName) {
+        logger.info(listStudentName.get(count++ % listStudentName.size()));
+
+    }
+
+    public List<String> getAllStartsWithA() {
+        return studentRepository.findAll()
+                .stream()
+                .map(Student::getName)
+                .filter(s->s.startsWith("A"))
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    public double getAverageAge() {
+        return studentRepository.findAll().stream()
+                .mapToInt(Student::getAge)
+                .average()
+                .orElseThrow(NotFoundException::new);
     }
 }
 
