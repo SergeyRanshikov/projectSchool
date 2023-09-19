@@ -8,6 +8,7 @@ import com.projectSchool.projectSchool.model.Faculty;
 import com.projectSchool.projectSchool.repository.FacultyRepository;
 
 import java.util.Collection;
+import java.util.Comparator;
 
 @Service
 public class FacultyService {
@@ -68,6 +69,13 @@ public class FacultyService {
         logger.info("invoked method getByStudentId");
         return facultyRepository.findByStudent_Id(studentId).orElseThrow(NotFoundException::new);
 
+    }
+
+    public String getLongestName() {
+        return facultyRepository.findAll().stream()
+                .map(Faculty::getName)
+                .max(Comparator.comparingInt(String::length))
+                .orElseThrow(NotFoundException::new);
     }
 
 

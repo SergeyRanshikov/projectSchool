@@ -139,5 +139,21 @@ public class StudentService {
                 .average()
                 .orElseThrow(NotFoundException::new);
     }
+
+    public List<String> getAllStartsWithA() {
+        return studentRepository.findAll()
+                .stream()
+                .map(Student::getName)
+                .filter(s->s.startsWith("A"))
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    public double getAverageAge() {
+        return studentRepository.findAll().stream()
+                .mapToInt(Student::getAge)
+                .average()
+                .orElseThrow(NotFoundException::new);
+    }
 }
 
